@@ -10,9 +10,11 @@ import time
 # 🔐 SERVICE NOW LOGIN DETAILS
 # =========================================================
 
-INSTANCE_URL = "https://dev219690.service-now.com"
-USERNAME = "admin"
-PASSWORD = "Rn^=7gPEQb0o"
+import os
+   
+INSTANCE_URL = os.environ.get("INSTANCE_URL", "https://dev219690.service-now.com")
+USERNAME = os.environ.get("USERNAME", "admin")
+PASSWORD = os.environ.get("PASSWORD", "")
 
 # =========================================================
 # 📄 XML FILE PATH
@@ -542,4 +544,5 @@ def main():
 
 
 if __name__ == "__main__":
+
     main()
