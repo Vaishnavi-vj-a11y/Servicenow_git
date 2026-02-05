@@ -1,0 +1,110 @@
+name: Deploy to ServiceNow
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'main.tf'
+      - 'terraform_vars.xml'
+  workflow_dispatch:
+
+jobs:
+  deploy-to-servicenow:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+      
+      - name: Extract Terraform variables to XML
+        run: |
+          python extract_tf_vars_to_xml.py main.tf
+      
+      - name: Deploy to ServiceNow
+        env:
+          INSTANCE_URL: ${{ secrets.SERVICENOW_INSTANCE_URL }}
+          USERNAME: ${{ secrets.SERVICENOW_USERNAME }}
+          PASSWORD: ${{ secrets.SERVICENOW_PASSWORD }}
+        run: |
+          python create_servicenow_catalog.py
+      
+      - name: Upload exported Update Set
+        uses: actions/upload-artifact@v4
+        with:
+          name: servicenow-update-set
+          path: '*_export.xml'
+          retention-days: 30
+```
+
+### **Step 3: Commit the File**
+1. Scroll down below the editor
+2. You'll see a "Commit changes" section
+3. In the commit message box, type: `Add ServiceNow deployment workflow`
+4. Click the green **"Commit changes..."** button (the one you see in your screenshot)
+
+---
+
+## **After Committing**
+
+### **Next: Add Your Python Scripts**
+
+You need to upload these files to the **root** of your repository:
+
+1. `main.tf` - Your Terraform file
+2. `extract_tf_vars_to_xml.py` - The extraction script
+3. `create_servicenow_catalog.py` - The deployment script
+
+**How to add them:**
+1. Click on `Servicenow_git` (at the top, in the breadcrumb)
+2. Click **"Add file"** → **"Upload files"**
+3. Drag and drop your 3 Python/Terraform files
+4. Click **"Commit changes"**
+
+---
+
+## **Then: Add GitHub Secrets**
+
+1. Click **"Settings"** tab (top of the page)
+2. In the left sidebar, click **"Secrets and variables"** → **"Actions"**
+3. Click **"New repository secret"**
+4. Add these 3 secrets:
+
+   **Secret 1:**
+   - Name: `SERVICENOW_INSTANCE_URL`
+   - Secret: `https://dev219690.service-now.com`
+   - Click "Add secret"
+
+   **Secret 2:**
+   - Name: `SERVICENOW_USERNAME`
+   - Secret: `admin`
+   - Click "Add secret"
+
+   **Secret 3:**
+   - Name: `SERVICENOW_PASSWORD`
+   - Secret: `Rn^=7gPEQb0o`
+   - Click "Add secret"
+
+---
+
+## **Final Repository Structure**
+
+After all steps, your repo should look like:
+```
+Servicenow_git/
+├── .github/
+│   └── workflows/
+│       └── main.yml  ← You're creating this now
+├── main.tf  ← Upload this next
+├── extract_tf_vars_to_xml.py  ← Upload this next
+└── create_servicenow_catalog.py  ← Upload this next
