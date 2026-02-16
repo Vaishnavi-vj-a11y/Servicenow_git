@@ -516,7 +516,7 @@ def main():
     time.sleep(2)
     
     # Add variables from XML to catalog item
-    add_catalog_variables(catalog_item_sys_id, upda te_set_sys_id, variables)
+    add_catalog_variables(catalog_item_sys_id, update_set_sys_id, variables)
     time.sleep(2)
     
     # Mark update set as complete
@@ -546,3 +546,4 @@ def main():
 if __name__ == "__main__":
 
     main()
+
